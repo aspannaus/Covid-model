@@ -78,6 +78,8 @@ model tn_covid {
     I0 ~ gaussian(I0, 1.0)
     R0 ~ gaussian(R0, 1.0)
     p_rep ~ truncated_gaussian(p_rep, 0.1, lower = 0, upper = 1.0)
+    p_rep0 ~ truncated_gaussian(p_rep0, 0.1, lower = 0, upper = 0.5)
+    p_rep1 ~ truncated_gaussian(p_rep1, 0.1, lower = 0.3, upper = 1.0)
     p_phi ~ truncated_gaussian(p_phi, 1, lower = 0, upper = 0.5)   
   }
 }
