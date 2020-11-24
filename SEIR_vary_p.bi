@@ -1,6 +1,6 @@
 /**
 
-SIR Covid model
+SEIR Covid model
 negative binomial observation density
 
 **/

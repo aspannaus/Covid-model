@@ -5,7 +5,7 @@ suppressPackageStartupMessages(library(tidyverse))
 library(pander)
 library(lubridate, warn.conflicts=FALSE)
 
-save_file <- function(file_path, libbi_data){
+save_file <- function(libbi_data, file_path){
     out <- tryCatch(
       {
         message("Saving rds file.")
@@ -79,25 +79,20 @@ posterior <- sample(bi_model, end_time=end_time, input=input_lst,
   adapt_proposal(min=0.125, max=0.4) %>%
   sample(nsamples=50000)
 
-# bi_lst <- bi_read(posterior %>% sample_obs)
-
-print("Saving RData file.")
+print("Saving Data files.")
 save(sample_obs, posterior,  file=paste(path, state_abbr, '_', epi_model, '_', end_date, '-', iter, '.RData', sep=""))
-
-file_path <- paste(path, state_abbr, '_', epi_model, '_', end_date, '-', iter, '.rds', sep='')
-# save_file(file_path, posterior)
-
-save_libbi(posterior, name=paste(path, state_abbr, '_', epi_model, '_', end_date, '.RDS', sep=""))
+save_file(posterior, name=paste(path, state_abbr, '_', epi_model, '_', end_date, '.RDS', sep=""))
 
 #####  make predictions  ######
 
 print("Making predictions...")
 
 pred_end <- end_time + (7 * 4)
-pred_bi <- predict(posterior, start_time=0, end_time=pred_end,
+pred_start <- end_time - (4 * 7)
+pred_bi <- predict(posterior, start_time=pred_start, end_time=pred_end,
                    output_every=7, target='prediction', nsamples=25000,
                    with=c("transform-obs-to-state"))
 
-print("Saving RData file.")
-save(pred_bi, file=paste(path, state_abbr, '_', epi_model, '_preds-onemonth.RData', sep=""))
-save_libbi(pred_bi, name=paste(path, state_abbr, '_', epi_model, '_preds-onemonth-', end_date, '.RDS', sep=""))
+print("Saving Data files.")
+save(pred_bi, file=paste(path, state_abbr, '_', epi_model, '_preds-onemonth_', epi_model, '_', '.RData', sep=""))
+save_file(pred_bi, name=paste(path, state_abbr, '_', epi_model, '_preds-onemonth_', epi_model, '_', end_date, '.RDS', sep=""))
